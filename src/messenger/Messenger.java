@@ -4,16 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,44 +44,7 @@ public class Messenger extends Thread {
     public void send(String msg, String name) {
         toSend = name + ": " + msg;
     }
-    
-    //Returns an array of strings denoting all reachable hosts in the local area
-    //network. A host is reachable iff [INetAddress].isReachable() returns true.
-    public static String[] findHosts() {
-        ArrayList<String> hosts = new ArrayList<>();
-        ArrayList<HostsDetector> detectors = new ArrayList<>();
-        
-        Thread[] threads = new Thread[4*Runtime.getRuntime().availableProcessors()];
-        
-        //for-loop assigns each thread a range on which to search - from (i*threads.length) to (i+1)*threads.length-1)
-        for (int i = 0; i < threads.length; i++) {
-            detectors.add(i, new HostsDetector(i*threads.length, (i+1)*threads.length-1));
-            threads[i] = new Thread(detectors.get(i));
-            threads[i].start();
-        }
-        
-        
-        for (int i = 0; i < threads.length; i++) {
-            
-            while(threads[i].isAlive()) {
-                try {
-                    Thread.sleep(HostsDetector.TIMEOUT);
-                } catch (InterruptedException ex) {
-                    break;
-                }
-            }
-            
-            String[] results = detectors.get(i).getReachableHosts();
-            hosts.addAll(Arrays.asList(results));
-        }
-        
-        String[] allHosts = new String[hosts.size()];
-        for (int i = 0; i < allHosts.length; i++) {
-            allHosts[i] = hosts.get(i);
-        }
-        return allHosts;
-    }
-    
+
     //directly connects this object's Socket object to a peer.
     private void connect(String peerAddr) {
         ss = null;
@@ -187,28 +144,24 @@ public class Messenger extends Thread {
         }
     }
     
-    public static void main(String[] args) throws UnknownHostException, IOException {
-        
-        Window_connect wConn = new Window_connect();
-        wConn.setVisible(true);
+    public static void main(String[] args) {
+        Window_connect winConn = new Window_connect();
+        //winConn.setVisible(true);
         try {
-            synchronized(wConn) {
-                wConn.wait();
+            synchronized(winConn) {
+                winConn.wait();
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(Messenger.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
         
-        if (wConn == null) //if Window_connect window was closed early
-            return;
+        String userName = winConn.getUserName();
+        Messenger mes = winConn.getMessenger();
+        winConn.dispose();
         
-        String userName = wConn.getUserName();
-        Messenger mes = wConn.getMessenger();
-        wConn.dispose();
-        
-        Window_chat wChat = new Window_chat(mes, userName);
-        wChat.setVisible(true);
+        Window_chat winChat = new Window_chat(mes, userName);
+        winChat.setVisible(true);
         Thread t = new Thread(mes);
         t.start();
     }

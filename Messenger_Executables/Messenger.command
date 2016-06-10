@@ -1,0 +1,1 @@
+osascript -e "do shell script \"java -jar ../dist/Messenger.jar\" with administrator privileges"

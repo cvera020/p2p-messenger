@@ -1,15 +1,17 @@
 package messenger;
 
+import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Window_connect extends javax.swing.JFrame {
-    
     public Messenger m = null;
     public String userName = null;
     
     public Window_connect() {
         initComponents();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public Messenger getMessenger() {
@@ -27,6 +29,7 @@ public class Window_connect extends javax.swing.JFrame {
         jButton_connect = new javax.swing.JButton();
         jTextField_sn = new javax.swing.JTextField();
         jTextField_ip = new javax.swing.JTextField();
+        jButton_findHosts = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -34,6 +37,11 @@ public class Window_connect extends javax.swing.JFrame {
         jButton_connect.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton_connectMouseClicked(evt);
+            }
+        });
+        jButton_connect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_connectActionPerformed(evt);
             }
         });
 
@@ -51,6 +59,13 @@ public class Window_connect extends javax.swing.JFrame {
             }
         });
 
+        jButton_findHosts.setText("Find Hosts");
+        jButton_findHosts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_findHostsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -59,13 +74,14 @@ public class Window_connect extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 126, Short.MAX_VALUE)
-                        .addComponent(jButton_connect))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField_sn, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
                             .addComponent(jTextField_ip))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton_connect)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                        .addComponent(jButton_findHosts)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -75,9 +91,11 @@ public class Window_connect extends javax.swing.JFrame {
                 .addComponent(jTextField_sn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jTextField_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton_connect)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_connect)
+                    .addComponent(jButton_findHosts))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -108,6 +126,29 @@ public class Window_connect extends javax.swing.JFrame {
             jButton_connectMouseClicked(null);
     }//GEN-LAST:event_jTextField_snKeyTyped
 
+    private void jButton_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_connectActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_connectActionPerformed
+
+    private void jButton_findHostsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_findHostsActionPerformed
+        ArrayList<String> hosts = new HostsDetector().getReachableHosts();
+        Object[] options = new Object[hosts.size()];
+        for (int i = 0; i < hosts.size(); i++)
+            options[i] = hosts.get(i);
+        String s = (String)JOptionPane.showInputDialog(
+                    this,
+                    "Select a host to connect to: ",
+                    "Available hosts",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    "...");
+        //If a string was returned, say so.
+        if (s != null) {
+            jTextField_ip.setText(s);
+        }
+    }//GEN-LAST:event_jButton_findHostsActionPerformed
+
     
 
     public void start() {
@@ -133,6 +174,7 @@ public class Window_connect extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Window_connect.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -144,6 +186,7 @@ public class Window_connect extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_connect;
+    private javax.swing.JButton jButton_findHosts;
     private javax.swing.JTextField jTextField_ip;
     private javax.swing.JTextField jTextField_sn;
     // End of variables declaration//GEN-END:variables
